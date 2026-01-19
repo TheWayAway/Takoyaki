@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline - Takoyaki</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Takoyaki Timeline</h1>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </header>
+
+    <main class="timeline-container">
+        <% if (events.length === 0) { %>
+            <p class="no-events">No events recorded yet.</p>
+        <% } else { %>
+            <div class="timeline">
+                <% events.forEach(event => { %>
+                    <div class="timeline-event">
+                        <div class="event-date"><%= event.event_date %></div>
+                        <div class="event-content">
+                            <h3 class="event-title"><%= event.title %></h3>
+                            <% if (event.description) { %>
+                                <p class="event-description"><%= event.description %></p>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </main>
+</body>
+</html>
