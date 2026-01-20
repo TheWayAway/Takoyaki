@@ -7,20 +7,20 @@ module.exports = {
         .setName('addevent')
         .setDescription('Add a new event to the timeline')
         .addStringOption(option =>
-            option.setName('date')
-                .setDescription('Event date (YYYY-MM-DD) - defaults to today if not provided')
-                .setRequired(false))
-        .addStringOption(option =>
             option.setName('title')
                 .setDescription('Event title')
                 .setRequired(true))
         .addStringOption(option =>
-            option.setName('description')
-                .setDescription('Event description')
+            option.setName('date')
+                .setDescription('Event date (YYYY-MM-DD) - defaults to today if not provided')
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('time')
                 .setDescription('Event time (HH:MM, 24-hour format)')
+                .setRequired(false))
+        .addStringOption(option =>
+            option.setName('description')
+                .setDescription('Event description')
                 .setRequired(false)),
 
     async execute(interaction) {
