@@ -87,6 +87,26 @@ app.get('/api/events', requireAuth, (req, res) => {
     res.json(eventList);
 });
 
+// IMPORTANT: This route must be defined BEFORE /api/events/:id routes
+// Otherwise Express matches :id = "reorder" and returns 404
+app.put('/api/events/reorder', requireSuperAdmin, (req, res) => {
+    const updates = req.body;
+
+    if (!Array.isArray(updates)) {
+        return res.status(400).json({ error: 'Expected array of updates' });
+    }
+
+    // Validate each update has id and sort_order
+    for (const update of updates) {
+        if (typeof update.id !== 'number' || typeof update.sort_order !== 'number') {
+            return res.status(400).json({ error: 'Each update must have numeric id and sort_order' });
+        }
+    }
+
+    events.reorderEvents(updates);
+    res.json({ success: true });
+});
+
 app.get('/api/events/:id', requireAuth, (req, res) => {
     const event = events.getById(parseInt(req.params.id, 10));
     if (!event) {
@@ -122,24 +142,6 @@ app.delete('/api/events/:id', requireSuperAdmin, (req, res) => {
     }
 
     events.delete(id);
-    res.json({ success: true });
-});
-
-app.put('/api/events/reorder', requireSuperAdmin, (req, res) => {
-    const updates = req.body;
-
-    if (!Array.isArray(updates)) {
-        return res.status(400).json({ error: 'Expected array of updates' });
-    }
-
-    // Validate each update has id and sort_order
-    for (const update of updates) {
-        if (typeof update.id !== 'number' || typeof update.sort_order !== 'number') {
-            return res.status(400).json({ error: 'Each update must have numeric id and sort_order' });
-        }
-    }
-
-    events.reorderEvents(updates);
     res.json({ success: true });
 });
 
