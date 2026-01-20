@@ -8,10 +8,17 @@ console.log('ENV DEBUG:', {
     SUPER_ADMIN_PASSWORD: env('SUPER_ADMIN_PASSWORD') ? 'SET' : 'NOT SET',
 });
 
+// Parse comma-separated user IDs
+const parseUserIds = (value) => {
+    if (!value) return [];
+    return value.split(',').map(id => id.trim()).filter(id => id);
+};
+
 module.exports = {
     discord: {
         token: env('DISCORD_TOKEN'),
-        clientId: env('DISCORD_CLIENT_ID')
+        clientId: env('DISCORD_CLIENT_ID'),
+        allowedUserIds: parseUserIds(env('ALLOWED_USER_IDS'))
     },
     web: {
         port: parseInt(env('WEB_PORT'), 10) || 3000,
