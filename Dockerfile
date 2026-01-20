@@ -21,7 +21,6 @@ RUN npm ci --only=production
 # Copy application code
 COPY src/ ./src/
 COPY public/ ./public/
-COPY .env ./
 
 # Create data directory with proper permissions
 RUN mkdir -p /app/data && \
