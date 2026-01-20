@@ -67,7 +67,7 @@ module.exports = {
 
         await interaction.reply({
             content: `Event **${id}** updated:\n**Date:** ${updated.event_date}\n**Title:** ${updated.title}${updated.description ? `\n**Description:** ${updated.description}` : ''}`,
-            ephemeral: false
+            ephemeral: true
         });
     }
 };

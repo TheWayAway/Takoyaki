@@ -8,8 +8,8 @@ module.exports = {
         .setDescription('Add a new event to the timeline')
         .addStringOption(option =>
             option.setName('date')
-                .setDescription('Event date (YYYY-MM-DD)')
-                .setRequired(true))
+                .setDescription('Event date (YYYY-MM-DD) - defaults to today if not provided')
+                .setRequired(false))
         .addStringOption(option =>
             option.setName('title')
                 .setDescription('Event title')
@@ -27,12 +27,13 @@ module.exports = {
             });
         }
 
-        const date = interaction.options.getString('date');
+        const dateInput = interaction.options.getString('date');
+        const date = dateInput || new Date().toISOString().split('T')[0];
         const title = interaction.options.getString('title');
         const description = interaction.options.getString('description');
 
-        // Validate date format
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        // Validate date format if provided
+        if (dateInput && !/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
             return interaction.reply({
                 content: 'Invalid date format. Please use YYYY-MM-DD.',
                 ephemeral: true
@@ -43,7 +44,7 @@ module.exports = {
 
         await interaction.reply({
             content: `Event added with ID **${id}**\n**Date:** ${date}\n**Title:** ${title}${description ? `\n**Description:** ${description}` : ''}`,
-            ephemeral: false
+            ephemeral: true
         });
     }
 };

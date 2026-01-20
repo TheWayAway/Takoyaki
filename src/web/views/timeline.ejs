@@ -28,7 +28,7 @@
         <% } else { %>
             <div class="timeline">
                 <% events.forEach(event => { %>
-                    <div class="timeline-event" data-event-id="<%= event.id %>">
+                    <div class="timeline-event" data-event-id="<%= event.id %>" data-date="<%= event.event_date %>">
                         <div class="event-date"><%= event.event_date %></div>
                         <div class="event-content">
                             <div class="event-header">

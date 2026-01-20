@@ -33,7 +33,7 @@ module.exports = {
 
         await interaction.reply({
             content: `Event **${id}** deleted: \`${event.event_date}\` - ${event.title}`,
-            ephemeral: false
+            ephemeral: true
         });
     }
 };

@@ -20,7 +20,8 @@ function init() {
             created_by TEXT NOT NULL,
             created_at INTEGER NOT NULL,
             updated_by TEXT,
-            updated_at INTEGER
+            updated_at INTEGER,
+            sort_order INTEGER DEFAULT 0
         );
 
         CREATE TABLE IF NOT EXISTS guild_config (
@@ -30,6 +31,13 @@ function init() {
 
         CREATE INDEX IF NOT EXISTS idx_events_date ON events(event_date);
     `);
+
+    // Migration: Add sort_order column if it doesn't exist
+    const columns = db.pragma('table_info(events)');
+    const hasSortOrder = columns.some(col => col.name === 'sort_order');
+    if (!hasSortOrder) {
+        db.exec('ALTER TABLE events ADD COLUMN sort_order INTEGER DEFAULT 0');
+    }
 }
 
 init();

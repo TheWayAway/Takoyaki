@@ -49,12 +49,12 @@ module.exports = {
         if (response.length > 2000) {
             await interaction.reply({
                 content: response.substring(0, 1997) + '...',
-                ephemeral: false
+                ephemeral: true
             });
         } else {
             await interaction.reply({
                 content: response,
-                ephemeral: false
+                ephemeral: true
             });
         }
     }

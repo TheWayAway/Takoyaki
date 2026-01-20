@@ -125,6 +125,24 @@ app.delete('/api/events/:id', requireSuperAdmin, (req, res) => {
     res.json({ success: true });
 });
 
+app.put('/api/events/reorder', requireSuperAdmin, (req, res) => {
+    const updates = req.body;
+
+    if (!Array.isArray(updates)) {
+        return res.status(400).json({ error: 'Expected array of updates' });
+    }
+
+    // Validate each update has id and sort_order
+    for (const update of updates) {
+        if (typeof update.id !== 'number' || typeof update.sort_order !== 'number') {
+            return res.status(400).json({ error: 'Each update must have numeric id and sort_order' });
+        }
+    }
+
+    events.reorderEvents(updates);
+    res.json({ success: true });
+});
+
 function start() {
     return new Promise((resolve) => {
         const server = app.listen(config.web.port, () => {

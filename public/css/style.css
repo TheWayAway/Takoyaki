@@ -395,6 +395,40 @@ header h1 {
     margin: 15px 0;
 }
 
+/* Drag and drop styles */
+.timeline-event.draggable {
+    cursor: grab;
+}
+
+.timeline-event.draggable:active {
+    cursor: grabbing;
+}
+
+.timeline-event.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.timeline-event.drop-zone-valid {
+    outline: 2px dashed #f59e0b;
+    outline-offset: 4px;
+}
+
+.timeline-event.drop-indicator-above {
+    border-top: 3px solid #22c55e;
+    margin-top: -3px;
+}
+
+.timeline-event.drop-indicator-below {
+    border-bottom: 3px solid #22c55e;
+    margin-bottom: -3px;
+}
+
+/* Edit mode indicator on events */
+.edit-mode .timeline-event.draggable .event-content {
+    border-left-color: #f59e0b;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
     header {

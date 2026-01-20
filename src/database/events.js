@@ -39,8 +39,23 @@ const events = {
     },
 
     getAllChronological() {
-        const stmt = db.prepare('SELECT * FROM events ORDER BY event_date ASC, id ASC');
+        const stmt = db.prepare('SELECT * FROM events ORDER BY event_date ASC, sort_order ASC, id ASC');
         return stmt.all();
+    },
+
+    updateSortOrder(eventId, sortOrder) {
+        const stmt = db.prepare('UPDATE events SET sort_order = ? WHERE id = ?');
+        stmt.run(sortOrder, eventId);
+    },
+
+    reorderEvents(updates) {
+        const stmt = db.prepare('UPDATE events SET sort_order = ? WHERE id = ?');
+        const transaction = db.transaction((items) => {
+            for (const { id, sort_order } of items) {
+                stmt.run(sort_order, id);
+            }
+        });
+        transaction(updates);
     },
 
     update(id, updates, updatedBy) {
