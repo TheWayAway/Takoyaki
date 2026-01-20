@@ -4,9 +4,12 @@
 
     // DOM Elements
     const editModeBtn = document.getElementById('edit-mode-btn');
+    const addEventBtn = document.getElementById('add-event-btn');
     const editModal = document.getElementById('edit-modal');
     const deleteModal = document.getElementById('delete-modal');
+    const addModal = document.getElementById('add-modal');
     const editForm = document.getElementById('edit-form');
+    const addForm = document.getElementById('add-form');
 
     // Edit mode state
     let editModeEnabled = false;
@@ -21,6 +24,11 @@
         document.body.classList.toggle('edit-mode', editModeEnabled);
         editModeBtn.textContent = editModeEnabled ? 'Disable Edit Mode' : 'Enable Edit Mode';
         editModeBtn.classList.toggle('active', editModeEnabled);
+
+        // Show/hide Add Event button
+        if (addEventBtn) {
+            addEventBtn.classList.toggle('hidden', !editModeEnabled);
+        }
 
         // Show/hide event IDs and action buttons
         document.querySelectorAll('.event-id, .event-actions').forEach(el => {
@@ -208,6 +216,47 @@
         deleteModal.classList.add('hidden');
     }
 
+    // Open add modal
+    function openAddModal() {
+        addForm.reset();
+        addModal.classList.remove('hidden');
+    }
+
+    // Close add modal
+    function closeAddModal() {
+        addModal.classList.add('hidden');
+        addForm.reset();
+    }
+
+    // Create new event
+    async function createEvent(e) {
+        e.preventDefault();
+
+        const data = {
+            eventDate: document.getElementById('add-date').value || null,
+            eventTime: document.getElementById('add-time').value || null,
+            title: document.getElementById('add-title').value,
+            description: document.getElementById('add-description').value || null
+        };
+
+        try {
+            const response = await fetch('/api/events', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error || 'Failed to create event');
+            }
+
+            window.location.reload();
+        } catch (error) {
+            alert('Error creating event: ' + error.message);
+        }
+    }
+
     // Save event changes
     async function saveEvent(e) {
         e.preventDefault();
@@ -262,6 +311,10 @@
         editModeBtn.addEventListener('click', toggleEditMode);
     }
 
+    if (addEventBtn) {
+        addEventBtn.addEventListener('click', openAddModal);
+    }
+
     // Edit button clicks (event delegation)
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('btn-edit')) {
@@ -285,6 +338,14 @@
     document.getElementById('edit-cancel')?.addEventListener('click', closeEditModal);
     editModal?.querySelector('.modal-backdrop')?.addEventListener('click', closeEditModal);
 
+    // Add modal events
+    if (addForm) {
+        addForm.addEventListener('submit', createEvent);
+    }
+
+    document.getElementById('add-cancel')?.addEventListener('click', closeAddModal);
+    addModal?.querySelector('.modal-backdrop')?.addEventListener('click', closeAddModal);
+
     // Delete modal events
     document.getElementById('delete-confirm')?.addEventListener('click', deleteEvent);
     document.getElementById('delete-cancel')?.addEventListener('click', closeDeleteModal);
@@ -295,6 +356,7 @@
         if (e.key === 'Escape') {
             closeEditModal();
             closeDeleteModal();
+            closeAddModal();
         }
     });
 })();

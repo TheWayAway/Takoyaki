@@ -87,6 +87,21 @@ app.get('/api/events', requireAuth, (req, res) => {
     res.json(eventList);
 });
 
+app.post('/api/events', requireSuperAdmin, (req, res) => {
+    const { eventDate, title, description, eventTime } = req.body;
+
+    if (!title || !title.trim()) {
+        return res.status(400).json({ error: 'Title is required' });
+    }
+
+    // Default to today if no date provided
+    const date = eventDate || new Date().toISOString().split('T')[0];
+
+    const eventId = events.create(date, title.trim(), description || null, 'web-admin', eventTime || null);
+    const newEvent = events.getById(eventId);
+    res.status(201).json(newEvent);
+});
+
 // IMPORTANT: This route must be defined BEFORE /api/events/:id routes
 // Otherwise Express matches :id = "reorder" and returns 404
 app.put('/api/events/reorder', requireSuperAdmin, (req, res) => {
