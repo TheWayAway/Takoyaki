@@ -1,15 +1,24 @@
 require('dotenv').config();
 
+// Support both prefixed (from .env file) and non-prefixed (from Komodo) env vars
+const env = (name) => process.env[`TAKOYAKI_${name}`] || process.env[name];
+
+// Debug: log env vars
+console.log('ENV DEBUG:', {
+    SUPER_ADMIN_PASSWORD: env('SUPER_ADMIN_PASSWORD') ? 'SET' : 'NOT SET',
+});
+
 module.exports = {
     discord: {
-        token: process.env.DISCORD_TOKEN,
-        clientId: process.env.DISCORD_CLIENT_ID
+        token: env('DISCORD_TOKEN'),
+        clientId: env('DISCORD_CLIENT_ID')
     },
     web: {
-        port: parseInt(process.env.WEB_PORT, 10) || 3000,
-        password: process.env.WEB_PASSWORD,
-        sessionSecret: process.env.SESSION_SECRET,
-        publicUrl: process.env.PUBLIC_URL || `http://localhost:${process.env.WEB_PORT || 3000}`
+        port: parseInt(env('WEB_PORT'), 10) || 3000,
+        password: env('WEB_PASSWORD'),
+        superAdminPassword: env('SUPER_ADMIN_PASSWORD'),
+        sessionSecret: env('SESSION_SECRET'),
+        publicUrl: env('PUBLIC_URL') || `http://localhost:${env('WEB_PORT') || 3000}`
     },
-    nodeEnv: process.env.NODE_ENV || 'development'
+    nodeEnv: env('NODE_ENV') || 'development'
 };

@@ -1,0 +1,48 @@
+services:
+  takoyaki:
+    build: .
+    pull_policy: build
+    container_name: takoyaki
+    restart: unless-stopped
+    environment:
+      - DISCORD_TOKEN=${TAKOYAKI_DISCORD_TOKEN}
+      - DISCORD_CLIENT_ID=${TAKOYAKI_DISCORD_CLIENT_ID}
+      - WEB_PORT=${TAKOYAKI_WEB_PORT:-3000}
+      - WEB_PASSWORD=${TAKOYAKI_WEB_PASSWORD}
+      - SESSION_SECRET=${TAKOYAKI_SESSION_SECRET}
+      - PUBLIC_URL=${TAKOYAKI_PUBLIC_URL}
+      - NODE_ENV=${TAKOYAKI_NODE_ENV:-production}
+    volumes:
+      - takoyaki-data:/app/data
+    networks:
+      - takoyaki-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${WEB_PORT:-3000}/api/events"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Cloudflare Tunnel - securely exposes takoyaki without opening ports
+  cloudflared:
+    build: ./cloudflared
+    pull_policy: build
+    container_name: takoyaki-cloudflared
+    restart: unless-stopped
+    environment:
+      - CLOUDFLARE_TUNNEL_ID=${TAKOYAKI_CLOUDFLARE_TUNNEL_ID}
+      - CLOUDFLARE_HOSTNAME=${TAKOYAKI_CLOUDFLARE_HOSTNAME}
+      - CLOUDFLARE_SERVICE_URL=http://takoyaki:3000
+    volumes:
+      - ./cloudflared-credentials.json:/etc/cloudflared/credentials.json:ro
+    networks:
+      - takoyaki-network
+    depends_on:
+      - takoyaki
+
+networks:
+  takoyaki-network:
+    driver: bridge
+
+volumes:
+  takoyaki-data:

@@ -5,4 +5,11 @@ function requireAuth(req, res, next) {
     res.redirect('/login');
 }
 
-module.exports = { requireAuth };
+function requireSuperAdmin(req, res, next) {
+    if (req.session && req.session.authenticated && req.session.isSuperAdmin) {
+        return next();
+    }
+    res.status(403).json({ error: 'Super admin access required' });
+}
+
+module.exports = { requireAuth, requireSuperAdmin };

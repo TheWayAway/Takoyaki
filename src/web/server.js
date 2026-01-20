@@ -5,9 +5,12 @@ const path = require('path');
 const config = require('../config');
 const db = require('../database/index');
 const { events } = require('../database/events');
-const { requireAuth } = require('./middleware/auth');
+const { requireAuth, requireSuperAdmin } = require('./middleware/auth');
 
 const app = express();
+
+// Trust proxy (Cloudflare tunnel)
+app.set('trust proxy', 1);
 
 // View engine setup
 app.set('view engine', 'ejs');
@@ -48,8 +51,16 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     const { password } = req.body;
 
+    // Check super admin password first
+    if (config.web.superAdminPassword && password === config.web.superAdminPassword) {
+        req.session.authenticated = true;
+        req.session.isSuperAdmin = true;
+        return res.redirect('/');
+    }
+
     if (password === config.web.password) {
         req.session.authenticated = true;
+        req.session.isSuperAdmin = false;
         return res.redirect('/');
     }
 
@@ -64,13 +75,54 @@ app.get('/logout', (req, res) => {
 // Protected routes
 app.get('/', requireAuth, (req, res) => {
     const eventList = events.getAllChronological();
-    res.render('timeline', { events: eventList });
+    res.render('timeline', {
+        events: eventList,
+        isSuperAdmin: req.session.isSuperAdmin || false
+    });
 });
 
-// API endpoint
+// API endpoints
 app.get('/api/events', requireAuth, (req, res) => {
     const eventList = events.getAllChronological();
     res.json(eventList);
+});
+
+app.get('/api/events/:id', requireAuth, (req, res) => {
+    const event = events.getById(parseInt(req.params.id, 10));
+    if (!event) {
+        return res.status(404).json({ error: 'Event not found' });
+    }
+    res.json(event);
+});
+
+app.put('/api/events/:id', requireSuperAdmin, (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    const { eventDate, title, description } = req.body;
+
+    const event = events.getById(id);
+    if (!event) {
+        return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const updates = {};
+    if (eventDate !== undefined) updates.eventDate = eventDate;
+    if (title !== undefined) updates.title = title;
+    if (description !== undefined) updates.description = description;
+
+    const updated = events.update(id, updates, 'web-admin');
+    res.json(updated);
+});
+
+app.delete('/api/events/:id', requireSuperAdmin, (req, res) => {
+    const id = parseInt(req.params.id, 10);
+
+    const event = events.getById(id);
+    if (!event) {
+        return res.status(404).json({ error: 'Event not found' });
+    }
+
+    events.delete(id);
+    res.json({ success: true });
 });
 
 function start() {

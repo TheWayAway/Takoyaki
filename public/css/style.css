@@ -94,8 +94,52 @@ header {
     border-bottom: 2px solid #e94560;
 }
 
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
 header h1 {
     color: #e94560;
+}
+
+.admin-badge {
+    background: #f59e0b;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.edit-mode-btn {
+    width: auto;
+    padding: 8px 16px;
+    background: transparent;
+    color: #f59e0b;
+    border: 1px solid #f59e0b;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.edit-mode-btn:hover {
+    background: #f59e0b;
+    color: #000;
+}
+
+.edit-mode-btn.active {
+    background: #f59e0b;
+    color: #000;
 }
 
 .logout-btn {
@@ -172,14 +216,183 @@ header h1 {
     border-left: 3px solid #e94560;
 }
 
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
 .event-title {
     color: #fff;
     margin-bottom: 10px;
 }
 
+.event-id {
+    font-family: monospace;
+    font-size: 11px;
+    background: #333;
+    color: #888;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
 .event-description {
     color: #aaa;
     line-height: 1.6;
+}
+
+.event-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+}
+
+.btn-edit, .btn-delete {
+    width: auto;
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-edit {
+    background: transparent;
+    color: #3b82f6;
+    border: 1px solid #3b82f6;
+}
+
+.btn-edit:hover {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.btn-delete {
+    background: transparent;
+    color: #ef4444;
+    border: 1px solid #ef4444;
+}
+
+.btn-delete:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* Utility classes */
+.hidden {
+    display: none !important;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    position: relative;
+    background: #16213e;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    color: #e94560;
+    margin-bottom: 20px;
+}
+
+.modal-content textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background: #0f0f23;
+    color: #fff;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.modal-content textarea:focus {
+    outline: none;
+    border-color: #e94560;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel, .btn-save, .btn-delete-confirm {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel {
+    background: transparent;
+    color: #aaa;
+    border: 1px solid #aaa;
+}
+
+.btn-cancel:hover {
+    color: #fff;
+    border-color: #fff;
+}
+
+.btn-save {
+    background: #22c55e;
+    color: #fff;
+    border: none;
+}
+
+.btn-save:hover {
+    background: #16a34a;
+}
+
+.btn-delete-confirm {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+}
+
+.btn-delete-confirm:hover {
+    background: #dc2626;
+}
+
+.delete-event-title {
+    color: #fff;
+    font-weight: bold;
+    margin: 15px 0;
 }
 
 /* Responsive */
