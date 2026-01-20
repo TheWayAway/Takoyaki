@@ -50,6 +50,18 @@ A Discord bot for logging events with a web-based timeline viewer. Track importa
 | `SESSION_SECRET` | Secret key for session encryption (use a random 32+ character string) |
 | `PUBLIC_URL` | Public URL where the timeline is accessible |
 | `NODE_ENV` | Environment mode (`development` or `production`) |
+| `SUPER_ADMIN_PASSWORD` | Password for super admin access (enables edit/delete in web UI) |
+
+## Docker Deployment
+
+When deploying with Docker or Komodo, new environment variables must also be added to `compose.yaml` in the environment mapping section. For example:
+
+```yaml
+environment:
+  - DISCORD_TOKEN=${DISCORD_TOKEN}
+  - SUPER_ADMIN_PASSWORD=${SUPER_ADMIN_PASSWORD}
+  # ... other variables
+```
 
 ## Discord Commands
 
