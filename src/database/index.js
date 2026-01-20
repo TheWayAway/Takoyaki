@@ -38,6 +38,12 @@ function init() {
     if (!hasSortOrder) {
         db.exec('ALTER TABLE events ADD COLUMN sort_order INTEGER DEFAULT 0');
     }
+
+    // Migration: Add event_time column if it doesn't exist
+    const hasEventTime = columns.some(col => col.name === 'event_time');
+    if (!hasEventTime) {
+        db.exec('ALTER TABLE events ADD COLUMN event_time TEXT');
+    }
 }
 
 init();

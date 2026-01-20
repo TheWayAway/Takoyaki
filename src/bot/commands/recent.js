@@ -3,32 +3,20 @@ const { events } = require('../../database/events');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('events')
-        .setDescription('List events from the timeline')
+        .setName('recent')
+        .setDescription('View the most recent events')
         .addIntegerOption(option =>
             option.setName('count')
-                .setDescription('Number of events to show (default: 10)')
+                .setDescription('Number of events to show (default: 5)')
                 .setRequired(false)
                 .setMinValue(1)
-                .setMaxValue(50))
-        .addStringOption(option =>
-            option.setName('before')
-                .setDescription('Show events before this date (YYYY-MM-DD)')
-                .setRequired(false))
-        .addStringOption(option =>
-            option.setName('after')
-                .setDescription('Show events after this date (YYYY-MM-DD)')
-                .setRequired(false)),
+                .setMaxValue(20)),
 
     async execute(interaction) {
-        const count = interaction.options.getInteger('count') || 10;
-        const before = interaction.options.getString('before');
-        const after = interaction.options.getString('after');
+        const count = interaction.options.getInteger('count') || 5;
 
         const eventList = events.getAll({
             limit: count,
-            before,
-            after,
             orderDesc: true
         });
 
@@ -46,9 +34,8 @@ module.exports = {
             return `**[${e.id}]** \`${dateDisplay}\` - ${e.title}`;
         });
 
-        const response = `**Timeline Events** (${eventList.length})\n\n${lines.join('\n')}`;
+        const response = `**Recent Events** (${eventList.length})\n\n${lines.join('\n')}`;
 
-        // Discord has a 2000 character limit
         if (response.length > 2000) {
             await interaction.reply({
                 content: response.substring(0, 1997) + '...',

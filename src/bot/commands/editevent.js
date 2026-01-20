@@ -21,6 +21,10 @@ module.exports = {
         .addStringOption(option =>
             option.setName('description')
                 .setDescription('New description')
+                .setRequired(false))
+        .addStringOption(option =>
+            option.setName('time')
+                .setDescription('New time (HH:MM, 24-hour format)')
                 .setRequired(false)),
 
     async execute(interaction) {
@@ -35,8 +39,9 @@ module.exports = {
         const date = interaction.options.getString('date');
         const title = interaction.options.getString('title');
         const description = interaction.options.getString('description');
+        const time = interaction.options.getString('time');
 
-        if (!date && !title && description === null) {
+        if (!date && !title && description === null && !time) {
             return interaction.reply({
                 content: 'Please provide at least one field to update.',
                 ephemeral: true
@@ -51,10 +56,19 @@ module.exports = {
             });
         }
 
+        // Validate time format if provided
+        if (time && !/^\d{2}:\d{2}$/.test(time)) {
+            return interaction.reply({
+                content: 'Invalid time format. Please use HH:MM (24-hour format).',
+                ephemeral: true
+            });
+        }
+
         const updates = {};
         if (date) updates.eventDate = date;
         if (title) updates.title = title;
         if (description !== null) updates.description = description;
+        if (time) updates.eventTime = time;
 
         const updated = events.update(id, updates, interaction.user.id);
 
@@ -65,8 +79,11 @@ module.exports = {
             });
         }
 
+        const dateTimeDisplay = updated.event_time
+            ? `${updated.event_date} ${updated.event_time}`
+            : updated.event_date;
         await interaction.reply({
-            content: `Event **${id}** updated:\n**Date:** ${updated.event_date}\n**Title:** ${updated.title}${updated.description ? `\n**Description:** ${updated.description}` : ''}`,
+            content: `Event **${id}** updated:\n**Date:** ${dateTimeDisplay}\n**Title:** ${updated.title}${updated.description ? `\n**Description:** ${updated.description}` : ''}`,
             ephemeral: true
         });
     }

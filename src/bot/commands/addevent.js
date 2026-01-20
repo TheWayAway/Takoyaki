@@ -17,6 +17,10 @@ module.exports = {
         .addStringOption(option =>
             option.setName('description')
                 .setDescription('Event description')
+                .setRequired(false))
+        .addStringOption(option =>
+            option.setName('time')
+                .setDescription('Event time (HH:MM, 24-hour format)')
                 .setRequired(false)),
 
     async execute(interaction) {
@@ -31,6 +35,7 @@ module.exports = {
         const date = dateInput || new Date().toISOString().split('T')[0];
         const title = interaction.options.getString('title');
         const description = interaction.options.getString('description');
+        const time = interaction.options.getString('time');
 
         // Validate date format if provided
         if (dateInput && !/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
@@ -40,10 +45,19 @@ module.exports = {
             });
         }
 
-        const id = events.create(date, title, description, interaction.user.id);
+        // Validate time format if provided
+        if (time && !/^\d{2}:\d{2}$/.test(time)) {
+            return interaction.reply({
+                content: 'Invalid time format. Please use HH:MM (24-hour format).',
+                ephemeral: true
+            });
+        }
 
+        const id = events.create(date, title, description, interaction.user.id, time);
+
+        const dateTimeDisplay = time ? `${date} ${time}` : date;
         await interaction.reply({
-            content: `Event added with ID **${id}**\n**Date:** ${date}\n**Title:** ${title}${description ? `\n**Description:** ${description}` : ''}`,
+            content: `Event added with ID **${id}**\n**Date:** ${dateTimeDisplay}\n**Title:** ${title}${description ? `\n**Description:** ${description}` : ''}`,
             ephemeral: true
         });
     }

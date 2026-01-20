@@ -2,12 +2,12 @@ const db = require('./index');
 
 // Event CRUD operations
 const events = {
-    create(eventDate, title, description, createdBy) {
+    create(eventDate, title, description, createdBy, eventTime = null) {
         const stmt = db.prepare(`
-            INSERT INTO events (event_date, title, description, created_by, created_at)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO events (event_date, title, description, created_by, created_at, event_time)
+            VALUES (?, ?, ?, ?, ?, ?)
         `);
-        const result = stmt.run(eventDate, title, description, createdBy, Date.now());
+        const result = stmt.run(eventDate, title, description, createdBy, Date.now(), eventTime);
         return result.lastInsertRowid;
     },
 
@@ -76,6 +76,10 @@ const events = {
         if (updates.description !== undefined) {
             fields.push('description = ?');
             params.push(updates.description);
+        }
+        if (updates.eventTime !== undefined) {
+            fields.push('event_time = ?');
+            params.push(updates.eventTime);
         }
 
         if (fields.length === 0) return event;
